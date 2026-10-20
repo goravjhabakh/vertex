@@ -1,5 +1,5 @@
-import { DesignSystemShowcase } from "@/components/design-system/design-system-showcase"
+import { VertexHomePage } from "@/components/home/home-page"
 
 export default function HomePage() {
-  return <DesignSystemShowcase />
+  return <VertexHomePage />
 }
