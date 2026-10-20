@@ -1,5 +1,5 @@
 import { UserIcon } from "@sanity/icons"
-import { defineField, defineType } from "sanity"
+import { defineArrayMember, defineField, defineType } from "sanity"
 export const instructor = defineType({
   name: "instructor",
   title: "Instructor",
@@ -14,8 +14,20 @@ export const instructor = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({ name: "photo", type: "imageWithAlt", validation: (rule) => rule.required() }),
-    defineField({ name: "expertise", type: "string", validation: (rule) => rule.required().max(160) }),
+    defineField({
+      name: "expertise",
+      type: "array",
+      of: [defineArrayMember({ type: "string", validation: (rule) => rule.required().max(160) })],
+      validation: (rule) => rule.required().min(1),
+    }),
     defineField({ name: "bio", type: "richText", validation: (rule) => rule.required().min(1) }),
   ],
-  preview: { select: { title: "name", subtitle: "expertise", media: "photo" } },
+  preview: {
+    select: { title: "name", expertise: "expertise", media: "photo" },
+    prepare: ({ title, expertise, media }) => ({
+      title,
+      subtitle: expertise?.join(", ") ?? "No expertise",
+      media,
+    }),
+  },
 })

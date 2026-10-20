@@ -12,7 +12,15 @@ export const resource = defineType({
     defineField({
       name: "type",
       type: "string",
-      options: { list: ["Article", "Code", "Download", "Tool", "Other"] },
+      options: {
+        list: [
+          { title: "Link", value: "link" },
+          { title: "Code", value: "code" },
+          { title: "Download", value: "download" },
+          { title: "Tool", value: "tool" },
+          { title: "Other", value: "other" },
+        ],
+      },
       validation: (rule) => rule.required(),
     }),
     defineField({ name: "title", type: "string", validation: (rule) => rule.required() }),

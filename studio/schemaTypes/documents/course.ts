@@ -36,10 +36,21 @@ export const course = defineType({
       name: "level",
       type: "string",
       group: "overview",
-      options: { list: ["Beginner", "Intermediate", "Advanced"] },
+      options: {
+        list: [
+          { title: "Beginner", value: "beginner" },
+          { title: "Intermediate", value: "intermediate" },
+          { title: "Advanced", value: "advanced" },
+        ],
+      },
       validation: (rule) => rule.required(),
     }),
-    defineField({ name: "price", type: "price", group: "overview", validation: (rule) => rule.required() }),
+    defineField({
+      name: "price",
+      type: "number",
+      group: "overview",
+      validation: (rule) => rule.required().min(0),
+    }),
     defineField({ name: "popular", type: "boolean", group: "overview", initialValue: false }),
     defineField({
       name: "studentCount",

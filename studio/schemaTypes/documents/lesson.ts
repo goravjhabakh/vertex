@@ -70,7 +70,7 @@ export const lesson = defineType({
     }),
     defineField({ name: "thumbnail", type: "imageWithAlt", group: "video", validation: (rule) => rule.required() }),
     defineField({
-      name: "durationSeconds",
+      name: "duration",
       title: "Duration (seconds)",
       type: "number",
       group: "video",
@@ -94,7 +94,7 @@ export const lesson = defineType({
     }),
   ],
   preview: {
-    select: { title: "title", subtitle: "durationSeconds", media: "thumbnail" },
+    select: { title: "title", subtitle: "duration", media: "thumbnail" },
     prepare: ({ title, subtitle, media }) => ({
       title,
       subtitle: subtitle ? `${Math.round(subtitle / 60)} min` : "No duration",
