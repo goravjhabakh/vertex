@@ -1,5 +1,6 @@
 import Link from "next/link"
 import type { ReactNode } from "react"
+import { Suspense } from "react"
 import { HeroSearch } from "@/components/home/hero-search"
 import {
   ArrowRightIcon,
@@ -13,6 +14,7 @@ import {
   TypeScriptLogoMark,
   VertexLogo,
 } from "@/components/ui/icons"
+import { NavAuthControls } from "@/components/ui/nav-auth-controls"
 
 interface HomeCourse {
   slug: string
@@ -53,77 +55,6 @@ const HOME_COURSES: HomeCourse[] = [
     logo: <TypeScriptLogoMark size={68} />,
   },
 ]
-
-function UserAvatar() {
-  return (
-    <div
-      role="img"
-      className="relative h-[42px] w-[42px] shrink-0 overflow-hidden rounded-full border border-[#E5E0D8] bg-[#E8E2DC] shadow-[0_1px_2px_rgba(15,23,42,0.06)]"
-      aria-label="User profile"
-    >
-      <svg
-        viewBox="0 0 80 80"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-full w-full"
-        aria-hidden="true"
-      >
-        <rect width="80" height="80" fill="url(#avatar_bg)" />
-        {/* Back hair */}
-        <path d="M18 44C18 22 30 13 43 13C56 13 64 23 65 44C66 57 67 68 67 76H16C16 66 18 55 18 44Z" fill="#1F1614" />
-        {/* Shoulders / dark top */}
-        <path d="M12 80C14 66 25 60 40 60C55 60 66 66 68 80H12Z" fill="#18181B" />
-        {/* Neck & collarbone */}
-        <path d="M33 50H47V64C47 67.5 43.8 70 40 70C36.2 70 33 67.5 33 64V50Z" fill="#DFA689" />
-        <path d="M33 52C35 55.5 45 55.5 47 52V57C44 59 36 59 33 57V52Z" fill="#C98B6E" opacity="0.55" />
-        {/* Face */}
-        <path
-          d="M25.5 35C25.5 23.5 32 17.5 40.5 17.5C49 17.5 55 23.5 55 35C55 46.2 48.2 54.5 40.5 54.5C32.8 54.5 25.5 46.2 25.5 35Z"
-          fill="url(#skin_grad)"
-        />
-        {/* Soft cheek blush */}
-        <ellipse cx="31.5" cy="40.5" rx="3.8" ry="2.2" fill="#E0826D" opacity="0.35" />
-        <ellipse cx="49" cy="40.5" rx="3.8" ry="2.2" fill="#E0826D" opacity="0.35" />
-        {/* Eyebrows */}
-        <path d="M30 31.2C32 29.8 35.2 29.8 37 30.8" stroke="#2A1B17" strokeWidth="1.6" strokeLinecap="round" />
-        <path d="M43.8 30.8C45.8 29.8 48.8 29.8 50.8 31.2" stroke="#2A1B17" strokeWidth="1.6" strokeLinecap="round" />
-        {/* Eyes */}
-        <ellipse cx="33.8" cy="34.5" rx="2.1" ry="1.4" fill="#1F1614" />
-        <ellipse cx="47" cy="34.5" rx="2.1" ry="1.4" fill="#1F1614" />
-        <circle cx="34.4" cy="34.1" r="0.5" fill="#FFFFFF" />
-        <circle cx="47.6" cy="34.1" r="0.5" fill="#FFFFFF" />
-        {/* Nose */}
-        <path
-          d="M40.5 34.5V41.2C39.4 41.8 38.6 41.6 38.2 41"
-          stroke="#C28164"
-          strokeWidth="1.3"
-          strokeLinecap="round"
-        />
-        {/* Smile */}
-        <path d="M35.2 45.2C37.2 47.4 43.2 47.4 45.2 45.2" stroke="#AD5348" strokeWidth="1.8" strokeLinecap="round" />
-        {/* Front hair parting */}
-        <path
-          d="M24 38C24 25 32 18 41 18C44 18 47 19.5 49 22C46 19.5 39 20 33 25C28 29 26 35 25.5 41L24 38Z"
-          fill="#1A1110"
-        />
-        <path
-          d="M42 15C51 15 58 22 59 36C60 47 61 59 61 68H54C55 56 55 44 53 33C51 24 46 19 41 18L42 15Z"
-          fill="#1A1110"
-        />
-        <defs>
-          <linearGradient id="avatar_bg" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#EAE5DF" />
-            <stop offset="1" stopColor="#D6CFC7" />
-          </linearGradient>
-          <linearGradient id="skin_grad" x1="28" y1="18" x2="52" y2="54" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#F2C2A8" />
-            <stop offset="1" stopColor="#DDA082" />
-          </linearGradient>
-        </defs>
-      </svg>
-    </div>
-  )
-}
 
 function RisingBarsFooterGraphic() {
   const leftBars = [
@@ -207,7 +138,7 @@ export function VertexHomePage() {
                 </nav>
               </div>
 
-              <div className="flex shrink-0 items-center gap-2.5 sm:gap-5">
+              <div className="flex shrink-0 items-center gap-2.5 sm:gap-4">
                 <button
                   type="button"
                   aria-label="Notifications"
@@ -215,7 +146,11 @@ export function VertexHomePage() {
                 >
                   <BellIcon size={21} />
                 </button>
-                <UserAvatar />
+                <Suspense
+                  fallback={<div className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-[#F3EFEA] animate-pulse" />}
+                >
+                  <NavAuthControls />
+                </Suspense>
               </div>
             </header>
 

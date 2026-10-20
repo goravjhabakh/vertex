@@ -173,6 +173,7 @@ You cannot infer these from the code, so keep them in mind.
 - The dataset is private. Keep the read token on the server, never expose it to the client, and fetch all content server side.
 - Keep project ids and keys in env, expose only client safe values to the browser, and keep a committed `.env.example` as the canonical list.
 - Clerk's secret key is server only. Only its publishable key may reach the browser, and protect private routes in Next.js middleware, not in client code.
+- In Next.js 16 with Partial Prerendering and `cacheComponents` enabled, Clerk client components, hooks (`useUser`, `useAuth`, `usePathname`), and auth pages (`<SignIn />`, `<SignUp />`) must be wrapped in `<Suspense>` boundaries to avoid build-time prerendering failures (`CLIENT_HOOK_DYNAMIC` or runtime data errors).
 - Any write token, such as the one used to save progress, is server only and used only inside a server route. The browser never writes content or progress.
 - PostHog's project key is public by design and may reach the browser. Any private PostHog API key stays server only.
 
