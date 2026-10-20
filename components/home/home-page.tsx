@@ -1,60 +1,29 @@
+import Image from "next/image"
 import Link from "next/link"
-import type { ReactNode } from "react"
 import { Suspense } from "react"
 import { HeroSearch } from "@/components/home/hero-search"
 import {
   ArrowRightIcon,
   BellIcon,
   ClockIcon,
-  DockerLogoMark,
   DocumentIcon,
   LevelBarsIcon,
-  NextjsLogoMark,
   StarIcon,
-  TypeScriptLogoMark,
   VertexLogo,
 } from "@/components/ui/icons"
 import { NavAuthControls } from "@/components/ui/nav-auth-controls"
+import { urlFor } from "@/sanity/lib/image"
+import type { CATALOG_COURSES_QUERY_RESULT } from "@/sanity/types"
 
-interface HomeCourse {
-  slug: string
-  title: string
-  description: string
-  level: "Beginner" | "Intermediate" | "Advanced"
-  duration: string
-  moduleCount: number
-  logo: ReactNode
+function formatDuration(seconds: number) {
+  const totalMinutes = Math.round(seconds / 60)
+  const hours = Math.floor(totalMinutes / 60)
+  const minutes = totalMinutes % 60
+
+  if (hours === 0) return `${minutes}m`
+  if (minutes === 0) return `${hours}h`
+  return `${hours}h ${minutes}m`
 }
-
-const HOME_COURSES: HomeCourse[] = [
-  {
-    slug: "nextjs-for-production",
-    title: "Next.js for Production",
-    description: "Build scalable, high-performance web applications with Next.js.",
-    level: "Intermediate",
-    duration: "18h 24m",
-    moduleCount: 12,
-    logo: <NextjsLogoMark size={68} />,
-  },
-  {
-    slug: "docker-essentials",
-    title: "Docker Essentials",
-    description: "Containerize applications and streamline your development workflow.",
-    level: "Beginner",
-    duration: "10h 12m",
-    moduleCount: 8,
-    logo: <DockerLogoMark size={72} />,
-  },
-  {
-    slug: "typescript-deep-dive",
-    title: "TypeScript Deep Dive",
-    description: "Go beyond the basics and write safer, more expressive code.",
-    level: "Intermediate",
-    duration: "14h 36m",
-    moduleCount: 10,
-    logo: <TypeScriptLogoMark size={68} />,
-  },
-]
 
 function RisingBarsFooterGraphic() {
   const leftBars = [
@@ -99,7 +68,7 @@ function RisingBarsFooterGraphic() {
   )
 }
 
-export function VertexHomePage() {
+export function VertexHomePage({ courses }: { courses: CATALOG_COURSES_QUERY_RESULT }) {
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden bg-[#FCFBF9] text-[#0F172A]">
       <div className="mx-auto flex min-h-screen max-w-[1160px] flex-col">
@@ -124,7 +93,7 @@ export function VertexHomePage() {
                 </Link>
                 <nav aria-label="Primary" className="flex items-center gap-4 sm:gap-9">
                   <Link
-                    href="#all-courses"
+                    href="/courses"
                     className="whitespace-nowrap font-sans text-[14px] sm:text-[15px] font-normal text-[#1E293B] transition-colors hover:text-[#F97316]"
                   >
                     Courses
@@ -183,7 +152,7 @@ export function VertexHomePage() {
               {/* Explore Courses CTA Button */}
               <div className="mt-8">
                 <Link
-                  href="#all-courses"
+                  href="/courses"
                   className="inline-flex h-[50px] items-center justify-center gap-3 rounded-[12px] bg-gradient-to-b from-[#EE7748] to-[#E3602D] px-7 font-sans text-[16px] font-medium text-white shadow-[0_10px_22px_-6px_rgba(227,96,45,0.5),inset_0_1px_0_rgba(255,255,255,0.25)] transition-all hover:from-[#E56B3B] hover:to-[#D45321]"
                 >
                   <span>Explore Courses</span>
@@ -204,7 +173,7 @@ export function VertexHomePage() {
                   All Courses
                 </h2>
                 <Link
-                  href="#all-courses"
+                  href="/courses"
                   className="inline-flex items-center gap-2 font-sans text-[15px] font-medium text-[#E56531] transition-colors hover:text-[#C2410C]"
                 >
                   <span>View all courses</span>
@@ -214,40 +183,66 @@ export function VertexHomePage() {
 
               {/* 3-Column Course Cards Grid */}
               <div className="mt-7 grid grid-cols-1 gap-6 md:grid-cols-3">
-                {HOME_COURSES.map((course) => (
-                  <Link
-                    key={course.slug}
-                    href={`/courses/${course.slug}`}
-                    className="group block rounded-[20px] border border-[#EAE5DF] bg-[#FAF8F5] p-1.5 shadow-[0_4px_20px_-6px_rgba(15,23,42,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#DFD8CE] hover:shadow-[0_12px_28px_-8px_rgba(15,23,42,0.08)]"
-                  >
-                    <article className="flex h-full flex-col justify-between rounded-[15px] border border-[#F2EFE9] bg-white p-6">
-                      <div>
-                        <div className="inline-flex">{course.logo}</div>
-                        <h3 className="mt-6 font-display text-[22px] font-medium leading-[1.3] text-[#0F172A] transition-colors group-hover:text-[#E3602D]">
-                          {course.title}
-                        </h3>
-                        <p className="mt-3 font-sans text-[14.5px] leading-[1.6] text-[#64748B]">
-                          {course.description}
-                        </p>
-                      </div>
+                {courses.slice(0, 3).map((course) => {
+                  const totalDuration = course.modules.reduce(
+                    (total, module) =>
+                      total + module.lessons.reduce((lessonTotal, lesson) => lessonTotal + lesson.duration, 0),
+                    0
+                  )
+                  const coverUrl = course.coverImage.asset
+                    ? urlFor(course.coverImage).width(136).height(136).fit("crop").url()
+                    : null
 
-                      <div className="mt-10 flex items-center justify-between gap-2 border-t border-[#F1EFEA] pt-4 font-sans text-[12px] text-[#64748B]">
-                        <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
-                          <LevelBarsIcon level={course.level} size={14} />
-                          <span>{course.level}</span>
-                        </span>
-                        <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
-                          <ClockIcon size={14} className="text-[#64748B]" />
-                          <span>{course.duration}</span>
-                        </span>
-                        <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
-                          <DocumentIcon size={14} className="text-[#64748B]" />
-                          <span>{course.moduleCount} modules</span>
-                        </span>
-                      </div>
-                    </article>
-                  </Link>
-                ))}
+                  return (
+                    <Link
+                      key={course.slug}
+                      href={`/courses/${course.slug}`}
+                      className="group block rounded-[20px] border border-[#EAE5DF] bg-[#FAF8F5] p-1.5 shadow-[0_4px_20px_-6px_rgba(15,23,42,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#DFD8CE] hover:shadow-[0_12px_28px_-8px_rgba(15,23,42,0.08)]"
+                    >
+                      <article className="flex h-full flex-col justify-between rounded-[15px] border border-[#F2EFE9] bg-white p-6">
+                        <div>
+                          <div className="relative h-[68px] w-[68px] overflow-hidden rounded-[16px] bg-[#111111]">
+                            {coverUrl ? (
+                              <Image
+                                src={coverUrl}
+                                alt={course.coverImage.alt}
+                                fill
+                                sizes="68px"
+                                className="object-cover"
+                              />
+                            ) : (
+                              <span
+                                className="flex h-full items-center justify-center font-display text-[30px] text-white"
+                                aria-hidden="true"
+                              >
+                                V
+                              </span>
+                            )}
+                          </div>
+                          <h3 className="mt-6 font-display text-[22px] font-medium leading-[1.3] text-[#0F172A] transition-colors group-hover:text-[#E3602D]">
+                            {course.title}
+                          </h3>
+                          <p className="mt-3 font-sans text-[14.5px] leading-[1.6] text-[#64748B]">{course.summary}</p>
+                        </div>
+
+                        <div className="mt-10 flex items-center justify-between gap-2 border-t border-[#F1EFEA] pt-4 font-sans text-[12px] text-[#64748B]">
+                          <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                            <LevelBarsIcon level={course.level} size={14} />
+                            <span>{course.level}</span>
+                          </span>
+                          <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                            <ClockIcon size={14} className="text-[#64748B]" />
+                            <span>{formatDuration(totalDuration)}</span>
+                          </span>
+                          <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                            <DocumentIcon size={14} className="text-[#64748B]" />
+                            <span>{course.modules.length} modules</span>
+                          </span>
+                        </div>
+                      </article>
+                    </Link>
+                  )
+                })}
               </div>
             </section>
 

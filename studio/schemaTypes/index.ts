@@ -2,6 +2,7 @@ import type { SchemaTypeDefinition } from "sanity"
 import { category } from "./documents/category"
 import { course } from "./documents/course"
 import { instructor } from "./documents/instructor"
+import { learnerProgress } from "./documents/learner-progress"
 import { lesson } from "./documents/lesson"
 import { imageWithAlt } from "./objects/image"
 import { learningOutcome } from "./objects/learning-outcome"
@@ -9,5 +10,16 @@ import { module } from "./objects/module"
 import { resource } from "./objects/resource"
 import { richText } from "./objects/rich-text"
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [category, course, instructor, lesson, imageWithAlt, learningOutcome, module, resource, richText],
+  types: [
+    category,
+    course,
+    instructor,
+    learnerProgress,
+    lesson,
+    imageWithAlt,
+    learningOutcome,
+    module,
+    resource,
+    richText,
+  ],
 }

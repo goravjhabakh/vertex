@@ -11,7 +11,7 @@ export function BrandNav({ activeItem = "courses" }: BrandNavProps) {
       <VertexLogo />
       <nav aria-label="Main navigation" className="flex items-center gap-6">
         <Link
-          href="/"
+          href="/courses"
           className={`font-sans text-[14px] font-semibold transition-colors ${
             activeItem === "courses" ? "text-[#F97316]" : "text-[#334155] hover:text-[#0F172A]"
           }`}

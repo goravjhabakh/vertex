@@ -17,6 +17,8 @@ export const readToken = assertValue(
   "Missing environment variable: SANITY_API_READ_TOKEN"
 )
 
+export const writeToken = process.env.SANITY_API_WRITE_TOKEN
+
 function assertValue<T>(v: T | undefined, errorMessage: string): T {
   if (v === undefined) {
     throw new Error(errorMessage)
